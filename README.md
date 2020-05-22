@@ -1,5 +1,7 @@
 # overview
 
+random remarks
+
 ```
 <- .png ->
 <- .php ->        NGINX         <- .php ->  PHP FPM PROCESS
@@ -7,12 +9,12 @@
 ```
 
 
-```
-
-**context/scope**
-http {
-  **directive**
-  server_name example.com
+```nginx
+# |-- context/scope
+http { 
+  
+#  |-- directive  
+  server_name example.com 
 }
 ```
 
@@ -31,7 +33,7 @@ nginx -t
 
 ## upstream logs (custom logs)
 
-Go to A file, probably `nginx.conf` and define a new log format
+Go to a file, probably `nginx.conf` and define a new log format
 
 ```nginx
 log_format rt_cache '$remote_addr ...';
@@ -140,7 +142,7 @@ will not try to re write the request, it will do a direct call to the location, 
 
 ## Directive Types
 
-**Array Directive** can be declared multiple types, like access_log. If a child context declare even once of the same, all the parent config of the same directive is overriten.
+**Array Directive** can be declared multiple times, like access_log. If a child context declare even once of the same, all the parent config of the same directive is overriten.
 
 **Stand Directive** can be declared only once in a given context, like root. 
 
@@ -149,15 +151,13 @@ will not try to re write the request, it will do a direct call to the location, 
 
 # Workers
 
-main nginx process spaw workers processes 
-
-Default: 1
+main nginx process spaw workers processes, default it's 1 worker
 
 It's good to have the same number of workers as cores
 
-The directive 
+The directive `worker_processes auto;` does exactly that.
 
-`worker_processes auto;` does exactly that (numbers of workers equals to core).
+It sets the numbers of workers equals to core.
 
 ## worker_connections
 
