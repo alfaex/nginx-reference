@@ -229,7 +229,7 @@ if recieves a request from a client stop after a certain number of seconds (prev
 
 ```
 
-# Dynamic Module {color:red}
+# Dynamic Module
 
 `nginx -V` to see the enabled modules
 
@@ -344,20 +344,102 @@ server {
 }
 ```
 
+# HTTP 2
+
+It's a separated module, verify if installed with `nginx -V`
+
 ```nginx
+
+server {
+    listen 443 ssl http2;
+    ssl_certificate /path/to/ssl/name.crt
+    ssl_certificate_key /path/to/ssl/self.key
+
+
+}
+```
+
+## Redirect to 443
+
+```nginx
+server {
+    listen 80;
+    server_name localhost:
+    return 301 https://$server_name$request_uri;
+    # or
+    return 301 https://$host$request_uri;
+}
+```
+
+
+## TLS
+
+```nginx
+server {
+    
+    # Disable the OLD ssl in favor of TLS
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+    # Optimise cipher suits
+    ssl_prefer_server_ciphers on;
+    
+    # ! tells to nginx not use that ciphers
+    ssl_ciphers ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5;
+
+    # Enable DH Params
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+
+    # enable HSTS - (strict transport security)
+    add_header Strict-Transport-Security "max-age=31536000" always;
+
+    # SSl session (cache the hand-shake connection)
+    ssl_session_cache shared:SSL:40m; # type:name:size
+    ssl_session_timeout 4h; # how long to keep the cache
+    ssl_session_tickets on; # prevent always read from cache with tickets managed by the server
+}
 ```
 
 ```nginx
 ```
-
+```nginx
+```
+```nginx
+```
+```nginx
+```
+```nginx
+```
+```nginx
+```
+```nginx
+```
 ```nginx
 ```
 
-```nginx
-```
+
+
+
+# Misc
+
+### ssl for http2 
+
+`$ openssl req -x509 -days 900 -nodes -newkey rsa:2048 -keyout PATH_TO_SAVE_KEY.key -out PATH_TO_CERT.cert`
+
+### dh param
+
+size must match the private key size 
+
+`$ openssl dhparam 2048 -out PATH_TO_FILE.pem`
+
+### version
+
+`server_tokens off;`
+
+### click jacking
 
 ```nginx
+add_header X-Frame-Options "SAMEORIGIN";
+add_header X-XSS-Protection "1; mode=block";
 ```
 
-```nginx
-```
+### remove http_autoindex_module
