@@ -1,3 +1,11 @@
+# MUST Read
+
+https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
+
+## Resources
+
+https://github.com/fcambus/nginx-resources
+
 # overview
 
 random remarks
@@ -399,23 +407,48 @@ server {
 }
 ```
 
+# Reverse Proxy
+
 ```nginx
-```
-```nginx
-```
-```nginx
-```
-```nginx
-```
-```nginx
-```
-```nginx
-```
-```nginx
-```
-```nginx
+
+location /php {
+    proxy_pass 'http://localhost:9999/';
+}
+
 ```
 
+Slash at the end of the proxy_pass prevent nginx to append `php` to 'http://localhost:9999/php';
+
+If send more paths on the request, it ignore the php and send the rest
+` localhost/php/some/path` will proxy to `http://localhost:9999/some/path`
+
+
+```nginx
+location /php {
+    
+    # send headers to the client with `add_header`
+    add_header proxied 'xHeader'
+
+    # send header to the proxy
+    proxy_set_header proxied 'xHeader'
+}
+```
+
+
+# Load Balance
+
+```nginx
+    upstream my_server_farm {
+        server localhost:10001;
+        server localhost:10002;
+        server localhost:10003;
+    }
+
+    location / {
+        proxy_pass http://my_server_farm;
+    }
+
+```
 
 
 
