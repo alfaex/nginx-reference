@@ -476,3 +476,17 @@ add_header X-XSS-Protection "1; mode=block";
 ```
 
 ### remove http_autoindex_module
+
+
+
+# IF
+
+Consideration for using if.
+
+https://agentzh.blogspot.com/2011/03/how-nginx-location-if-works.html
+
+- If create a 'location' like block
+- it has a rewrite phase in the order that they're in the config file (rewrite meaning it goes rewriting parameters, like variables)
+- if block must have a 'content handler'
+- Nginx traps into the "if" inner block (not shure but seems like that it never goes out once it entered, so a normal flow like in any language don't occour)
+- things outside of the implicit location of 'if' will be inherited (it depends if the directive is inheritable)
