@@ -86,11 +86,43 @@ will match only 'localhost/greet5' and 'localhost/greet6'
 ### location weight
 
 more important to least
-1. = exactly
-2. ^~ forward match
-3. ~ case sensitive regex
-4. ~* case insensitive regex
-5. prefix 
+
+- = exactly
+- ^~ forward match
+  - it's a prefix match
+  - higher priority over regular expression matches even if a regular expression existis and match might be more specific.
+  - it still has lower priority than an exact match (without any modifiers)
+- ~ case sensitive regex
+- ~* case insensitive regex
+- prefix
+  - if there are similar prefix, nginx will match on the specificity of the prefix match the longest prefix that matches the request URL path.
+
+### location subpath
+
+In case that it's need to have a site hosted in a subdomain `http://mysite.com.br/blog` but the application it's not expecting the **/blog** subpath because it's serving in any other path.
+
+It's possible to "remove" some subpaths from the request.
+
+By default nginx will receive this request and get the subpath and pass to the proxy_pass
+```nginx
+location /portal/api { 
+    proxy_pass http://potato:3000;
+}
+```
+This will result in Request from `wherever/portal/api` to `http://potato:3000/portal/api` but in potato we don't have the route `/portal/api` we have only `/api`.
+
+To remove the `/portal` subpath we have to put `/` at the end of location and put the right subpath in the proxypass ending with `/` too.
+
+```nginx
+location /portal/api/ { 
+    proxy_pass http://potato:3000/api/;
+}
+```
+This way nginx will forward only the stuff after `/portal/api/` to the proxy_pass.
+
+The result would be like this.
+
+Request `wherever/portal/api/conf/something` will be proxied to `http://potato:3000/api/conf/something`
 
 ## query strings
 
